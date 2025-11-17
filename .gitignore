@@ -1,0 +1,17 @@
+# Node
+node_modules
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist
+build
+
+# Env files
+*.env
+.env
+.env.local
+
+# Mac/OS
+.DS_Store
