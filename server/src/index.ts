@@ -39,10 +39,19 @@ function saveSubscribers(list: Subscriber[]) {
 // ---------- Resend setup (instead of SMTP/nodemailer) ----------
 
 const resendApiKey = process.env.RESEND_API_KEY;
-const fromEmail = process.env.FROM_EMAIL; // must be a verified sender in Resend
-const adminKey = process.env.ADMIN_KEY;   // protects the /api/notify-project-update endpoint
-console.log("[CONFIG] Using FROM_EMAIL:", fromEmail);
 
+// Force a safe default sender that Resend allows without domain verification
+const DEFAULT_FROM = "Portfolio Updates <onboarding@resend.dev>";
+
+// Only trust FROM_EMAIL if it uses the Resend onboarding domain
+const fromEmail =
+  process.env.FROM_EMAIL && process.env.FROM_EMAIL.includes("@resend.dev")
+    ? process.env.FROM_EMAIL
+    : DEFAULT_FROM;
+
+const adminKey = process.env.ADMIN_KEY;
+
+console.log("[CONFIG] Using FROM_EMAIL:", fromEmail);
 
 if (!resendApiKey) {
   console.warn(
@@ -50,13 +59,8 @@ if (!resendApiKey) {
   );
 }
 
-if (!fromEmail) {
-  console.warn(
-    "[WARN] FROM_EMAIL not set. Please configure a verified sender address for Resend."
-  );
-}
-
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
+
 
 // ---------- routes ----------
 
