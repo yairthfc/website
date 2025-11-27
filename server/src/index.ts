@@ -1,9 +1,10 @@
-﻿import "dotenv/config";
+﻿// server/src/index.ts
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 const app = express();
 app.use(cors());
@@ -35,42 +36,25 @@ function saveSubscribers(list: Subscriber[]) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2), "utf8");
 }
 
-// ---------- email (nodemailer) setup ----------
+// ---------- Resend setup (instead of SMTP/nodemailer) ----------
 
-const smtpHost = process.env.SMTP_HOST;
-const smtpPort = Number(process.env.SMTP_PORT || 587);
-const smtpSecure = process.env.SMTP_SECURE === "true"; // usually false for 587
-const smtpUser = process.env.SMTP_USER;
-const smtpPass = process.env.SMTP_PASS;
-const fromEmail = process.env.FROM_EMAIL || smtpUser;
+const resendApiKey = process.env.RESEND_API_KEY;
+const fromEmail = process.env.FROM_EMAIL; // must be a verified sender in Resend
+const adminKey = process.env.ADMIN_KEY;   // protects the /api/notify-project-update endpoint
 
-// admin key for protecting update endpoint
-const adminKey = process.env.ADMIN_KEY;
-
-if (!smtpHost || !smtpUser || !smtpPass) {
+if (!resendApiKey) {
   console.warn(
-    "[WARN] SMTP not fully configured. Set SMTP_HOST, SMTP_USER, SMTP_PASS in .env to enable email sending."
+    "[WARN] RESEND_API_KEY not set. /api/notify-project-update will not be able to send emails."
   );
 }
 
-const transporter = nodemailer.createTransport({
-  host: smtpHost,
-  port: smtpPort,
-  secure: smtpSecure,
-  auth: {
-    user: smtpUser,
-    pass: smtpPass,
-  },
-});
+if (!fromEmail) {
+  console.warn(
+    "[WARN] FROM_EMAIL not set. Please configure a verified sender address for Resend."
+  );
+}
 
-// optional self-test (won't crash if it fails)
-transporter.verify((err, success) => {
-  if (err) {
-    console.warn("[WARN] SMTP verify failed:", err.message);
-  } else {
-    console.log("[INFO] SMTP server is ready to send messages.");
-  }
-});
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 // ---------- routes ----------
 
@@ -121,7 +105,7 @@ app.post("/api/notify-project-update", async (req, res) => {
 
   if (!adminKey) {
     console.warn(
-      "[WARN] ADMIN_KEY not set in .env; refusing to send updates for safety."
+      "[WARN] ADMIN_KEY not set in env; refusing to send updates for safety."
     );
     return res.status(500).json({
       message: "ADMIN_KEY not configured on server.",
@@ -140,10 +124,10 @@ app.post("/api/notify-project-update", async (req, res) => {
       .json({ message: "projectId, subject and message are required" });
   }
 
-  if (!smtpHost || !smtpUser || !smtpPass) {
+  if (!resend || !fromEmail) {
     return res.status(500).json({
       message:
-        "SMTP is not configured. Set SMTP_HOST, SMTP_USER, SMTP_PASS in .env.",
+        "Email sending is not configured. Make sure RESEND_API_KEY and FROM_EMAIL are set.",
     });
   }
 
@@ -162,14 +146,16 @@ app.post("/api/notify-project-update", async (req, res) => {
   );
 
   try {
-    await transporter.sendMail({
+    const result = await resend.emails.send({
       from: fromEmail,
-      to: fromEmail, // you as the main recipient
-      bcc: emails, // subscribers as BCC
+      to: fromEmail, // you as visible recipient
+      bcc: emails,   // subscribers in BCC
       subject,
       text: message,
       html: `<p>${message.replace(/\n/g, "<br/>")}</p>`,
     });
+
+    console.log("[INFO] Resend response:", result);
 
     return res.json({
       ok: true,
@@ -177,7 +163,7 @@ app.post("/api/notify-project-update", async (req, res) => {
       message: "Update email sent to subscribers.",
     });
   } catch (err: any) {
-    console.error("[ERROR] Failed to send update email:", err);
+    console.error("[ERROR] Failed to send update email via Resend:", err);
     return res.status(500).json({
       message: "Failed to send update email.",
       error: err?.message ?? "unknown error",
