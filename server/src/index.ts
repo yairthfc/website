@@ -13,7 +13,7 @@ app.use(express.json());
 const PORT = Number(process.env.PORT) || 5000;
 
 // ---------- types & helpers for subscribers storage ----------
-
+ 
 type Subscriber = {
   email: string;
   projectId: string;
