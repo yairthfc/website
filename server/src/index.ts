@@ -41,6 +41,8 @@ function saveSubscribers(list: Subscriber[]) {
 const resendApiKey = process.env.RESEND_API_KEY;
 const fromEmail = process.env.FROM_EMAIL; // must be a verified sender in Resend
 const adminKey = process.env.ADMIN_KEY;   // protects the /api/notify-project-update endpoint
+console.log("[CONFIG] Using FROM_EMAIL:", fromEmail);
+
 
 if (!resendApiKey) {
   console.warn(
