@@ -134,6 +134,9 @@ app.post("/api/notify-project-update", async (req, res) => {
   const all = readSubscribers();
   const recipients = all.filter((s) => s.projectId === projectId);
 
+  console.log("[DEBUG] subscribers data file:", DATA_FILE);
+  console.log("[DEBUG] recipients for projectId:", projectId, recipients.map(r => r.email));
+
   if (recipients.length === 0) {
     return res.status(404).json({
       message: `No subscribers found for projectId="${projectId}".`,
@@ -146,16 +149,20 @@ app.post("/api/notify-project-update", async (req, res) => {
   );
 
   try {
-    const result = await resend.emails.send({
-      from: fromEmail,
-      to: fromEmail, // you as visible recipient
-      bcc: emails,   // subscribers in BCC
-      subject,
-      text: message,
-      html: `<p>${message.replace(/\n/g, "<br/>")}</p>`,
-    });
+    // send individually to avoid bcc issues and get per-recipient results
+    const sendResults = await Promise.all(
+      emails.map((toEmail) =>
+        resend!.emails.send({
+          from: fromEmail,
+          to: toEmail,
+          subject,
+          text: message,
+          html: `<p>${message.replace(/\n/g, "<br/>")}</p>`,
+        })
+      )
+    );
 
-    console.log("[INFO] Resend response:", result);
+    console.log("[INFO] Resend send results:", sendResults);
 
     return res.json({
       ok: true,
@@ -164,9 +171,10 @@ app.post("/api/notify-project-update", async (req, res) => {
     });
   } catch (err: any) {
     console.error("[ERROR] Failed to send update email via Resend:", err);
+    // include more details if available
     return res.status(500).json({
       message: "Failed to send update email.",
-      error: err?.message ?? "unknown error",
+      error: err?.message ?? JSON.stringify(err),
     });
   }
 });
