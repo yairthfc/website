@@ -41,11 +41,11 @@ function saveSubscribers(list: Subscriber[]) {
 const resendApiKey = process.env.RESEND_API_KEY;
 
 // Force a safe default sender that Resend allows without domain verification
-const DEFAULT_FROM = "Portfolio Updates <onboarding@resend.dev>";
+const DEFAULT_FROM = "Yair Mahfud <updates@yairmahfud.com>";
 
 // Only trust FROM_EMAIL if it uses the Resend onboarding domain
 const fromEmail =
-  process.env.FROM_EMAIL && process.env.FROM_EMAIL.includes("@resend.dev")
+  process.env.FROM_EMAIL && process.env.FROM_EMAIL.includes("yairmahfud.com")
     ? process.env.FROM_EMAIL
     : DEFAULT_FROM;
 
