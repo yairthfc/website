@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-const slideHeight = "min-h-[calc(100vh-80px)]"; // full viewport minus header
+const slideHeight = "md:min-h-[calc(100vh-80px)]"; // full viewport minus header
 
 // Small component: arrow + "scroll for more" hint
 const ScrollHint = () => (
@@ -65,7 +65,7 @@ function HomePage() {
         id="intro"
         className={`relative bg-gradient-to-br from-slate-50 via-sky-50 to-sky-100 ${slideHeight}`}
       >
-        <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 py-20 md:flex-row md:items-center">
+        <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 py-12 md:py-20 md:flex-row md:items-center">
           {/* Left: text */}
           <motion.div
             className="flex-1 space-y-7"
@@ -162,13 +162,13 @@ function HomePage() {
       {/* SLIDE 2 – PROJECTS & ENGINEERING PATH */}
       <motion.section
         id="about"
-        className={`relative snap-start bg-slate-50 ${slideHeight}`}
+        className={`relative bg-slate-50 ${slideHeight}`}
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-6xl px-6 py-12 md:py-20">
           {/* header block with "at a glance" card */}
           <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="md:max-w-3xl">
@@ -346,13 +346,13 @@ function HomePage() {
       {/* SLIDE 3 – PERSONAL + PHOTO SLIDER */}
       <motion.section
         id="focus"
-        className={`relative snap-start bg-slate-100 ${slideHeight}`}
+        className={`relative bg-slate-100 ${slideHeight}`}
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 md:flex-row md:items-center">
+        <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12 md:py-20 md:flex-row md:items-center">
           {/* Left: text */}
           <div className="md:w-1/2">
             <h2 className="mb-4 text-3xl font-semibold text-slate-900 md:text-4xl">
@@ -453,7 +453,7 @@ function HomePage() {
       {/* SLIDE 4 – CONTACT (dark top, light bottom) */}
       <motion.section
         id="contact"
-        className={`relative snap-start bg-gradient-to-b from-slate-950 via-slate-950 to-slate-100 ${slideHeight} flex flex-col`}
+        className={`relative bg-gradient-to-b from-slate-950 via-slate-950 to-slate-100 ${slideHeight} flex flex-col`}
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
