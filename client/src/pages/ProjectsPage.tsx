@@ -60,6 +60,36 @@ const projects: Project[] = [
     tags: ["C / C++", "Threads", "Concurrency", "Scheduling"],
   },
   {
+  id: "optimization-logistic-regression",
+  title: "Optimization & Logistic Regression Framework",
+  highlight:
+    "A full optimization and logistic regression framework featuring custom gradient descent engines, learning-rate strategies, regularization, and rich experiment analysis.",
+  tech: "Python · NumPy · Optimization · Gradient Descent · Logistic Regression · Data Analysis",
+  description:
+    "A comprehensive optimization framework implementing multiple learning rate strategies, a modular objective-function API, a fully custom gradient descent engine, and a complete logistic regression model with L1/L2 regularization. The project includes cross-validation tools, loss functions, and extensive experiment scripts analyzing convergence behavior, learning-rate effects, and model performance on real datasets.",
+  details: [
+    "Developed a general gradient descent engine supporting batch updates, momentum, decaying learning rates, backtracking, clipping, and full callback hooks for visualization.",
+    "Implemented multiple learning-rate strategies, including constant schedules and exponential decay.",
+    "Designed a BaseModule objective API for reusable differentiable objective functions, enabling modular extension.",
+    "Built logistic regression with L1 and L2 regularization, decision boundaries, probability outputs, and gradient-based optimization.",
+    "Implemented K-fold cross-validation, model evaluation utilities, ROC curves, and AUC scoring.",
+    "Conducted deep experiments on convergence under different learning-rate strategies and objective smoothness.",
+    "Analyzed logistic regression behavior on the SA Heart dataset: optimal thresholds, ROC analysis, regularization effects, and accuracy metrics.",
+    "Included a detailed theoretical PDF covering gradient descent derivations, optimization theory, and logistic regression mathematics.",
+  ],
+  status: "Completed",
+  githubUrl: "https://github.com/yairthfc/optimization-logistic-regression",
+  category: "Machine Learning",
+  tags: [
+    "Python",
+    "NumPy",
+    "Optimization",
+    "Gradient Descent",
+    "Logistic Regression",
+    "Regularization",
+  ],
+  },
+  {
     id: "vm-manager",
     title: "Hierarchical Virtual Memory Management System",
     highlight:
@@ -103,6 +133,48 @@ const projects: Project[] = [
     tags: ["Python", "ML", "Hackathon", "scikit-learn"],
   },
   {
+  id: "ml-regression",
+  title: "Machine Learning Regression",
+  highlight:
+    "Full NumPy-based implementation of Linear and Polynomial Regression, with complete pipelines for real-world prediction tasks.",
+  tech: "Python · NumPy · pandas · Matplotlib · Seaborn · Regression models · Data analysis",
+  description:
+    "A full machine learning project implementing Linear Regression and Polynomial Regression completely from scratch using only NumPy. The project includes two full applied pipelines — house price prediction and city temperature modeling — combining theoretical understanding with practical evaluation, visualization, and end-to-end preprocessing.",
+  details: [
+    "Implemented closed-form Linear Regression and Polynomial Regression using matrix algebra, including prediction, intercept handling, and MSE evaluation.",
+    "Built two ML pipelines: a house price prediction model and a city temperature model with seasonality analysis and polynomial fitting.",
+    "Performed data preprocessing, feature cleaning, Pearson correlation analysis, and confidence-interval evaluation of model performance.",
+    "Conducted visualization work including scatter plots, temperature seasonality graphs, polynomial error comparison, and feature correlation charts.",
+    "Implemented training/validation splits, evaluated generalization performance, and compared polynomial degrees k=1…10.",
+    "Produced a theoretical write-up covering least squares, polynomial approximation, multivariate calculus foundations, and connections to SVD.",
+  ],
+  status: "Completed",
+  githubUrl: "https://github.com/yairthfc/ml-regression-from-scratch",
+  category: "Machine Learning",
+  tags: ["Python", "NumPy", "Regression", "Data Analysis", "ML"],
+  },
+  {
+  id: "adaboost-ensemble-model",
+  title: "AdaBoost Implementation – Ensemble Learning & Visualization Toolkit",
+  highlight:
+    "Full AdaBoost classifier built with custom decision stumps, complete training pipeline, and rich visualizations for boosting dynamics.",
+  tech: "Python · NumPy · Plotly · Ensemble Learning · ML Visualization",
+  description:
+    "A full implementation of the AdaBoost ensemble classifier using custom decision stumps as weak learners. The project includes a complete training pipeline, weighted-sample logic, theoretical derivations, and an experiment runner with rich visualizations for decision surfaces, boosting dynamics, and error curves. All components are implemented manually using NumPy.",
+  details: [
+    "Implemented the full AdaBoost algorithm, including weighted weak learners, alpha calculation, and iterative sample reweighting.",
+    "Developed a custom Decision Stump weak learner supporting thresholding, best-sign evaluation, and misclassification-based splitting.",
+    "Built a synthetic dataset generator and experiment runner for training, testing, and visualization.",
+    "Created visualizations for training vs. test error over iterations, classifier decision surfaces, and weight distributions.",
+    "Implemented partial predictions and partial loss tracking across learners for step-by-step analysis.",
+    "Included a theoretical PDF detailing AdaBoost derivations, error bounds, and the logic behind boosting.",
+  ],
+  status: "Completed",
+  githubUrl: "https://github.com/yairthfc/adaboost-from-scratch",
+  category: "Machine Learning",
+  tags: ["Python", "NumPy", "AdaBoost", "Ensemble Learning", "Visualization"],
+  },
+  {
   id: "nanobody-structure-nn",
   title: "Nanobody 3D Structure Prediction Network",
   highlight:
@@ -123,6 +195,27 @@ const projects: Project[] = [
     "https://github.com/yairthfc/nanobody-3d-structure-network",
   category: "Machine Learning / Structural Biology",
   tags: ["Python", "TensorFlow", "Keras", "ML", "Structural Biology"],
+  },
+  {
+  id: "ml-classification-models",
+  title: "ML Classification Models – Perceptron, LDA & Gaussian Naive Bayes",
+  highlight:
+    "Implemented core classification models with full training logic, evaluation tools, and decision-boundary visualizations.",
+  tech: "Python · NumPy · Plotly · Data visualization · ML algorithms",
+  description:
+    "A full implementation of classical machine learning classification models, including Perceptron, Linear Discriminant Analysis (LDA), and Gaussian Naive Bayes. The project mirrors scikit-learn’s estimator design and includes visualization tools to study decision boundaries, convergence dynamics, and classifier behavior across synthetic datasets.",
+  details: [
+    "Implemented Perceptron, LDA, and Gaussian Naive Bayes with a unified, scikit-learn–style fit/predict interface.",
+    "Created a BaseEstimator API enforcing consistent model structure across classifiers.",
+    "Built visualization utilities with Plotly for decision surfaces, covariance ellipses, accuracy comparisons, and loss curves.",
+    "Evaluated classifiers on separable, inseparable, and Gaussian mixture datasets.",
+    "Implemented custom loss and accuracy metrics for detailed performance insights.",
+    "Included a mathematical derivation PDF describing discriminants, likelihoods, and statistical assumptions.",
+  ],
+  status: "Completed",
+  githubUrl: "https://github.com/yairthfc/ml-classifiers-from-scratch",
+  category: "Machine Learning",
+  tags: ["Python", "NumPy", "Classification", "Perceptron", "LDA", "GaussianNB"],
   },
 ];
 

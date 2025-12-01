@@ -7,7 +7,12 @@ const projectOptions = [
   { id: "vm-manager", label: "Hierarchical Virtual Memory Manager" },
   { id: "iml-hackathon", label: "IML Hackathon – Match & Importance" },
   { id: "nanobody-structure-nn", label: "Nanobody 3D Structure Prediction" },
+  { id: "ml-regression", label: "ML Regression" },
+  { id: "ml-classification-models", label: "ML Classification Models" },
+  { id: "adaboost-ensemble-model", label: "AdaBoost Ensemble Model" },
+  { id: "optimization-logistic-regression", label: "Optimization & Logistic Regression" },
 ];
+
 
 function AdminUpdatesPage() {
   const [projectId, setProjectId] = useState<string>("internsheep");
