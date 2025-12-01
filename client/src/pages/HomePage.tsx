@@ -126,13 +126,13 @@ function HomePage() {
           >
             <div className="mx-auto max-w-sm rounded-3xl bg-white/90 p-6 shadow-xl shadow-sky-100/80 ring-1 ring-slate-200">
               {/* Banner */}
-              <div className="relative z-0 mb-5 h-48 w-full overflow-hidden rounded-2xl bg-slate-200">
+              <div className="relative mb-5 h-40 w-full overflow-hidden rounded-2xl bg-slate-200">
                 <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/40 via-slate-900/40 to-sky-300/40" />
               </div>
 
-              {/* Profile image */}
-              <div className="relative z-10 -mt-20 mb-5 flex justify-center">
-                <div className="h-28 w-28 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
+              {/* Profile image – no overlap */}
+              <div className="relative mb-5 flex justify-center">
+                <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
                   <img
                     src="/profile.jpeg"
                     alt="Yair profile"

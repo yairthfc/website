@@ -1,7 +1,5 @@
 import { NavLink } from "react-router-dom";
 import { FaGithub, FaLinkedin, FaEnvelope, FaPhone } from "react-icons/fa";
-
-// 👉 IMPORT YOUR CUSTOM LOGO COMPONENT
 import YmSignatureLogo from "../components/YmSignatureLogo";
 
 const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
@@ -13,28 +11,25 @@ const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
 function Header() {
   return (
     <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur shadow-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
 
         {/* Left: logo + name */}
         <div className="flex items-center gap-3">
-
-          {/* YM signature logo */}
           <YmSignatureLogo className="h-9 w-9 text-sky-500" />
 
-          {/* Name & Subtitle */}
           <div className="flex flex-col">
-            <span className="text-xl font-semibold tracking-tight">
+            <span className="text-lg font-semibold tracking-tight sm:text-xl">
               Yair Mahfud
             </span>
-            <span className="text-xs text-slate-500">
+            <span className="text-[11px] text-slate-500 sm:text-xs">
               Developer · CS Student · Builder
             </span>
           </div>
         </div>
 
-        {/* Middle: navigation */}
-        <nav className="hidden items-center gap-6 text-sm md:flex">
-          <NavLink to="/" className={navLinkClasses}>
+        {/* Middle: navigation – visible on mobile too */}
+        <nav className="flex items-center gap-3 text-xs sm:gap-5 sm:text-sm">
+          <NavLink to="/" className={navLinkClasses} end>
             {({ isActive }) => (
               <span className="relative">
                 <span>Home</span>
@@ -68,8 +63,8 @@ function Header() {
           </NavLink>
         </nav>
 
-        {/* Right: social icons */}
-        <div className="flex items-center gap-3 text-slate-500">
+        {/* Right: social icons – show only on md+ to avoid crowding mobile */}
+        <div className="hidden items-center gap-3 text-slate-500 md:flex">
           <a
             href="https://github.com/yairthfc"
             target="_blank"
