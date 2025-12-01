@@ -59,11 +59,11 @@ function HomePage() {
   // ----------------------------------------------------------------
 
   return (
-     <div className="min-h-[calc(100vh-80px)] overflow-y-auto md:h-[calc(100vh-80px)] md:snap-y md:snap-mandatory">
+     <div className="flex flex-col">
       {/* SLIDE 1 – INTRO */}
       <section
         id="intro"
-        className={`relative snap-start bg-gradient-to-br from-slate-50 via-sky-50 to-sky-100 ${slideHeight}`}
+        className={`relative bg-gradient-to-br from-slate-50 via-sky-50 to-sky-100 ${slideHeight}`}
       >
         <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 py-20 md:flex-row md:items-center">
           {/* Left: text */}
