@@ -411,122 +411,138 @@ function ProjectsPage() {
 
             {/* centered project detail panel */}
             <motion.div
-              className="fixed inset-x-4 top-16 z-40 mx-auto max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-200 md:inset-x-0"
+              className="fixed inset-x-4 top-16 z-40 mx-auto max-w-3xl rounded-2xl bg-white shadow-xl ring-1 ring-slate-200 md:inset-x-0"
               initial={{ opacity: 0, y: 20, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.97 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
             >
-              {/* Optional progress bar */}
+              {/* Progress bar */}
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: "100%" }}
                 className="h-1 bg-sky-500"
               />
 
-              <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 md:px-6">
-                <div>
-                  <h2 className="text-lg font-semibold text-slate-900 md:text-xl">
-                    {selectedProject.title}
-                  </h2>
-                  <p className="mt-1 text-xs text-slate-600 md:text-sm">
-                    {selectedProject.highlight}
-                  </p>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  {selectedProject.category && (
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-500">
-                      {selectedProject.category}
-                    </span>
-                  )}
-                  {selectedProject.status && (
-                    <span className="rounded-full bg-slate-900 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-slate-50">
-                      {selectedProject.status}
-                    </span>
-                  )}
-                </div>
-              </div>
+              {/* SCROLLABLE CONTENT WRAPPER */}
+              <div className="max-h-[calc(100vh-6rem)] overflow-y-auto">
 
-              <div className="px-5 py-4 text-sm text-slate-700 md:px-6 md:py-5">
-                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  Tech & Focus
-                </p>
-                <p className="mb-4 text-sm font-medium text-sky-700 md:text-[15px]">
-                  {selectedProject.tech}
-                </p>
-
-                <p className="mb-4 text-sm text-slate-700 md:text-[15px]">
-                  {selectedProject.description}
-                </p>
-
-                {selectedProject.details && (
-                  <ul className="mb-6 list-disc space-y-1.5 pl-5 text-xs text-slate-600 md:text-sm">
-                    {selectedProject.details.map((line, idx) => (
-                      <li key={idx}>{line}</li>
-                    ))}
-                  </ul>
-                )}
-
-                {/* Stay updated + footer actions */}
-                <div className="mt-2 flex flex-col gap-4 border-t border-slate-100 pt-4 md:flex-row md:items-center md:justify-between">
-                  {/* Stay updated form */}
-                  <div className="w-full md:w-2/3">
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      Stay updated on this project
-                    </p>
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Your email"
-                        className="flex-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleStayUpdated}
-                        className="rounded-full bg-sky-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-sky-700"
-                      >
-                        Stay updated
-                      </button>
-                    </div>
-                    <p className="mt-1 text-[10px] text-slate-400">
-                      In a full version, this would subscribe you to major
-                      updates for this specific project.
+                {/* HEADER */}
+                <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 md:px-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900 md:text-xl">
+                      {selectedProject.title}
+                    </h2>
+                    <p className="mt-1 text-xs text-slate-600 md:text-sm">
+                      {selectedProject.highlight}
                     </p>
                   </div>
 
-                  {/* GitHub + Close bottom-right */}
-                  <div className="flex flex-wrap items-center justify-end gap-3 md:w-1/3">
-                    {selectedProject.githubUrl ? (
-                      <a
-                        href={selectedProject.githubUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center rounded-full bg-slate-900 px-4 py-1.5 text-xs font-medium text-white hover:bg-slate-800"
-                      >
-                        View on GitHub
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        className="inline-flex cursor-default items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs font-medium text-slate-500"
-                      >
-                        GitHub link coming soon
-                      </button>
+                  <div className="flex flex-col items-end gap-2">
+                    {selectedProject.category && (
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-500">
+                        {selectedProject.category}
+                      </span>
                     )}
 
-                    <button
-                      type="button"
-                      className="inline-flex items-center rounded-full border border-slate-200 px-4 py-1.5 text-xs font-medium text-slate-600 hover:border-sky-400 hover:text-sky-700"
-                      onClick={() => setSelectedId(null)}
-                    >
-                      Close
-                    </button>
+                    {selectedProject.status && (
+                      <span className="rounded-full bg-slate-900 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-slate-50">
+                        {selectedProject.status}
+                      </span>
+                    )}
                   </div>
                 </div>
-              </div>
+
+                {/* BODY */}
+                <div className="px-5 py-4 text-sm text-slate-700 md:px-6 md:py-5">
+
+                  {/* TECH */}
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Tech & Focus
+                  </p>
+                  <p className="mb-4 text-sm font-medium text-sky-700 md:text-[15px]">
+                    {selectedProject.tech}
+                  </p>
+
+                  {/* DESCRIPTION */}
+                  <p className="mb-4 text-sm text-slate-700 md:text-[15px]">
+                    {selectedProject.description}
+                  </p>
+
+                  {/* DETAILS LIST */}
+                  {selectedProject.details && (
+                    <ul className="mb-6 list-disc space-y-1.5 pl-5 text-xs text-slate-600 md:text-sm">
+                      {selectedProject.details.map((line, idx) => (
+                        <li key={idx}>{line}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {/* FOOTER – stay updated + links */}
+                  <div className="mt-2 flex flex-col gap-4 border-t border-slate-100 pt-4 md:flex-row md:items-center md:justify-between">
+
+                    {/* Stay updated form */}
+                    <div className="w-full md:w-2/3">
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                        Stay updated on this project
+                      </p>
+
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Your email"
+                          className="flex-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleStayUpdated}
+                          className="rounded-full bg-sky-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-sky-700"
+                        >
+                          Stay updated
+                        </button>
+                      </div>
+
+                      <p className="mt-1 text-[10px] text-slate-400">
+                        In a full version, this would subscribe you to major updates for this specific project.
+                      </p>
+                    </div>
+
+                    {/* GitHub + Close */}
+                    <div className="flex flex-wrap items-center justify-end gap-3 md:w-1/3">
+                      {selectedProject.githubUrl ? (
+                        <a
+                          href={selectedProject.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center rounded-full bg-slate-900 px-4 py-1.5 text-xs font-medium text-white hover:bg-slate-800"
+                        >
+                          View on GitHub
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          className="inline-flex cursor-default items-center rounded-full bg-slate-100 px-4 py-1.5 text-xs font-medium text-slate-500"
+                        >
+                          GitHub link coming soon
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        className="inline-flex items-center rounded-full border border-slate-200 px-4 py-1.5 text-xs font-medium text-slate-600 hover:border-sky-400 hover:text-sky-700"
+                        onClick={() => setSelectedId(null)}
+                      >
+                        Close
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+              </div> {/* END scroll wrapper */}
             </motion.div>
+
           </>
         )}
       </AnimatePresence>
