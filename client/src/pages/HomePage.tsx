@@ -59,7 +59,7 @@ function HomePage() {
   // ----------------------------------------------------------------
 
   return (
-    <div className="h-[calc(100vh-80px)] snap-y snap-mandatory overflow-y-auto">
+     <div className="min-h-[calc(100vh-80px)] overflow-y-auto md:h-[calc(100vh-80px)] md:snap-y md:snap-mandatory">
       {/* SLIDE 1 – INTRO */}
       <section
         id="intro"
