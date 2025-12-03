@@ -60,6 +60,28 @@ const projects: Project[] = [
     tags: ["C / C++", "Threads", "Concurrency", "Scheduling"],
   },
   {
+  id: "kaminsky-dns-attack",
+  title: "Kaminsky DNS Cache Poisoning Attack",
+  highlight:
+    "Full implementation of the Kaminsky attack targeting BIND9 resolvers using raw packet injection and a custom authoritative side-channel.",
+  tech:
+    "C · libpcap · ldns · Raw Sockets · TCP/UDP · Docker",
+  description:
+    "A dual-component system (Attacker Server & Client) designed to poison the cache of a BIND9 DNS resolver. It implements the Kaminsky method by forcing the resolver to query random subdomains, bypassing TTL restrictions. The system captures the resolver's source port via a custom authoritative server and uses a high-performance client to flood the network with spoofed UDP packets, successfully injecting a malicious IP address for a target domain.",
+  details: [
+    "Developed a custom Authoritative Name Server that listens for DNS queries, captures the victim resolver's randomized source port, and exfiltrates it to the attacker client via a TCP side-channel[cite: 3, 4].",
+    "Implements an Attacker Client that executes a race-condition attack, sending legitimate queries for random subdomains (e.g., `ww[N].target.com`) to force continuous cache misses[cite: 6].",
+    "Uses `libpcap` and `ldns` to craft and inject thousands of spoofed UDP responses per round, masquerading as the Root Name Server (`192.168.1.204`)[cite: 7, 316].",
+    "Constructs malicious DNS payloads containing spoofed NS records and Glue records that redirect the target domain (`www.example1...`) to a poisoned IP (`6.6.6.6`)[cite: 8, 141].",
+    "Optimized for network performance using `setsockopt` with `SO_REUSEADDR` and `SO_REUSEPORT` to handle high-volume traffic during the attack window[cite: 335].",
+  ],
+  status: "Completed",
+  githubUrl:
+    "https://github.com/yairthfc/Kaminsky-DNS-Cache-Poisoning-Attack",
+  category: "Network Security / Infrastructure",
+  tags: ["C", "DNS", "Packet Injection", "libpcap", "Network Security"],
+  },
+  {
   id: "optimization-logistic-regression",
   title: "Optimization & Logistic Regression Framework",
   highlight:
@@ -152,6 +174,28 @@ const projects: Project[] = [
   githubUrl: "https://github.com/yairthfc/linear-and-polynomial-regression-project",
   category: "Machine Learning",
   tags: ["Python", "NumPy", "Regression", "Data Analysis", "ML"],
+  },
+  {
+  id: "buffer-overflow-attack",
+  title: "Stack-Based Buffer Overflow attack (x64)",
+  highlight:
+    "Custom C-based exploit that hijacks control flow of a vulnerable TCP server by overwriting the RIP and injecting dynamic shellcode.",
+  tech:
+    "C · x64 Assembly (AT&T) · Linux API · Network Sockets · GDB",
+  description:
+    "A sophisticated exploit program targeting a stack-based buffer overflow vulnerability in a remote Linux x64 TCP server. The program establishes a connection, calculates memory offsets dynamically based on leaked stack addresses, and delivers a precision-crafted payload containing x64 shellcode. This payload overwrites the return instruction pointer (RIP) to execute a `sys_execve` syscall, launching a remote script.",
+  details: [
+    "Implements a dynamic payload builder that constructs a binary buffer containing padding (NOP sled), the calculated return address, and custom shellcode at runtime[cite: 403, 428, 433].",
+    "Features hand-written x64 Assembly shellcode (AT&T syntax) that prepares registers (RAX, RDI, RSI) and triggers the `sys_execve` system call to execute a specific target script[cite: 433, 435, 451].",
+    "Handles critical low-level memory operations including Little Endian byte conversion (`u64_to_le`) and strict memory alignment to ensure the payload maps correctly to the victim's stack frame[cite: 439, 443].",
+    "Utilizes raw TCP sockets (`AF_INET`, `SOCK_STREAM`) to interface with the vulnerable server, handling connection establishment and payload transmission programmatically[cite: 478, 481].",
+    "Engineered to bypass standard execution flow by calculating the exact offset distance between the buffer start and the stored return address[cite: 428].",
+  ],
+  status: "Completed",
+  githubUrl:
+    "https://github.com/yairthfc/buffer-overflow-attack",
+  category: "Cybersecurity / Low-Level Programming",
+  tags: ["C", "Assembly", "Exploit Development", "Linux", "Network Security"],
   },
   {
   id: "adaboost-ensemble-model",

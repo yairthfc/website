@@ -11,6 +11,8 @@ const projectOptions = [
   { id: "ml-classification-models", label: "ML Classification Models" },
   { id: "adaboost-ensemble-model", label: "AdaBoost Ensemble Model" },
   { id: "optimization-logistic-regression", label: "Optimization & Logistic Regression" },
+  { id: "kaminsky-dns-attack", label: "Kaminsky DNS Cache Poisoning Attack" },
+  { id: "buffer-overflow-attack", label: "Buffer Overflow Attack Exploit" },
 ];
 
 
