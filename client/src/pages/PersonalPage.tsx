@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import PadelRally from "../components/PadelRally";
+import PadelBackground from "../components/PadelBackground";
 
 type Media = {
   type: "image" | "video";
@@ -180,6 +180,7 @@ const travel: Media[] = [
 export default function PersonalPage() {
   return (
     <div className="relative">
+      <PadelBackground />
       <div
         aria-hidden
         className="bg-dots pointer-events-none absolute inset-x-0 top-0 h-[34rem] [mask-image:linear-gradient(to_bottom,black,transparent)]"
@@ -194,10 +195,7 @@ export default function PersonalPage() {
         <p className="mt-5 max-w-prose text-lg leading-relaxed text-muted">
           Padel, Tottenham, and a notes app full of startup ideas.
         </p>
-        <div className="mt-10">
-          <PadelRally />
-        </div>
-        <nav className="mt-6 flex flex-wrap gap-2">
+        <nav className="mt-8 flex flex-wrap gap-2">
           {[
             ["#padel", "Padel"],
             ["#tottenham", "Tottenham"],
@@ -241,7 +239,7 @@ export default function PersonalPage() {
       </section>
 
       {/* tottenham */}
-      <section id="tottenham" className="border-y border-line bg-white">
+      <section id="tottenham" className="border-y border-line bg-white/70 backdrop-blur-sm">
         <div className="container-page grid gap-12 py-20 md:grid-cols-[1.1fr_1fr] md:gap-16 md:py-28">
           <div className="md:order-2">
             <ChapterText n="02" label="Football" title="Tottenham Hotspur">
