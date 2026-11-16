@@ -1,360 +1,141 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import Reveal from "../components/Reveal";
 
-type MediaItem = {
-  type: "image" | "video";
-  src: string;
-  alt: string;
+type Media = { type: "image" | "video"; src: string; alt: string };
+
+type Chapter = {
+  id: string;
+  label: string;
+  title: string;
+  body: string[];
+  quote?: string;
+  media: Media[];
 };
 
-type MediaCarouselProps = {
-  items: MediaItem[];
-};
+const chapters: Chapter[] = [
+  {
+    id: "padel",
+    label: "Padel",
+    title: "Where I get competitive",
+    body: [
+      "I play padel a lot, currently at a 3.5 level. I'm always working on something: positioning, shot choice, staying calm when the score is tight.",
+      "After a bad point I replay it in my head and try to figure out what went wrong. Honestly, it's not that different from debugging.",
+      "I'd love to build something for padel one day. Better tools for clubs, smarter booking, anything that makes regular players feel a bit more pro.",
+    ],
+    media: [
+      { type: "image", src: "/padel-1.jpeg", alt: "Playing a padel match" },
+      { type: "video", src: "/padel-1.mp4", alt: "Padel rally" },
+      { type: "image", src: "/padel-2.jpeg", alt: "On the padel court" },
+      { type: "image", src: "/padel-3.jpeg", alt: "After a match" },
+    ],
+  },
+  {
+    id: "tottenham",
+    label: "Football",
+    title: "Tottenham Hotspur",
+    body: [
+      "I got Tottenham from my late grandfather, Abraham Levy. He followed the club for more than 60 years and passed it straight on to me.",
+      "He grew up on Jimmy Greaves and Glenn Hoddle. I grew up on Harry Kane and Dele Alli. Different players, same club, and we watched a lot of it together.",
+      "Every match still reminds me of him. Supporting Spurs is rarely easy, but it keeps a bit of him with me every week, so I'm not going anywhere.",
+    ],
+    quote: "Audere est Facere. To dare is to do.",
+    media: [
+      { type: "image", src: "/spurs-1.jpg", alt: "At the Tottenham Hotspur Stadium" },
+      { type: "image", src: "/spurs-2.jpg", alt: "Wearing the Tottenham shirt" },
+      { type: "video", src: "/spurs-1.mp4", alt: "Matchday atmosphere" },
+    ],
+  },
+  {
+    id: "ideas",
+    label: "Travel & ideas",
+    title: "Collecting ideas",
+    body: [
+      "I have a habit of noticing when something is annoying and wondering if it could be an app. It happens at work, at the club, and especially when I travel.",
+      "Being somewhere new shows you how other people do everyday things, and that's where most of my ideas come from.",
+      "One day I want to build a company around the stuff I care about: software, sport, and people.",
+    ],
+    media: [
+      { type: "image", src: "/travel-1.jpeg", alt: "Travelling" },
+      { type: "image", src: "/travel-2.jpeg", alt: "Landscape from a trip" },
+      { type: "video", src: "/travel-1.MP4", alt: "Moment from a trip" },
+      { type: "image", src: "/travel-3.jpg", alt: "Another trip" },
+    ],
+  },
+];
 
-// Reusable media slider (images + videos) – BIGGER & LIGHT THEME
-function MediaCarousel({ items }: MediaCarouselProps) {
-  const [index, setIndex] = useState(0);
-  const current = items[index];
+function MediaTile({ m, className = "" }: { m: Media; className?: string }) {
+  const base = `h-full w-full bg-line object-cover transition-transform duration-500 group-hover:scale-[1.04] ${className}`;
+  return m.type === "image" ? (
+    <img src={m.src} alt={m.alt} loading="lazy" className={base} />
+  ) : (
+    <video src={`${m.src}#t=0.1`} aria-label={m.alt} controls playsInline preload="metadata" className={base} />
+  );
+}
 
-  const next = () => setIndex((prev) => (prev + 1) % items.length);
-  const prev = () =>
-    setIndex((prev) => (prev - 1 + items.length) % items.length);
-
+export default function PersonalPage() {
   return (
-    <div className="relative h-[26rem] w-full overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 md:h-[30rem]">
-      <motion.div
-        key={index}
-        className="h-full w-full"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-      >
-        {current.type === "image" ? (
-          <img
-            src={current.src}
-            alt={current.alt}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <video
-            src={current.src}
-            className="h-full w-full object-cover"
-            controls
-          />
-        )}
-      </motion.div>
-
-      {/* Soft top fade just for elegance */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-transparent" />
-
-      {/* arrows + dots */}
-      <div className="absolute inset-x-0 bottom-4 flex items-center justify-between px-4">
-        <button
-          type="button"
-          onClick={prev}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[20px] text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-white"
-        >
-          ‹
-        </button>
-
-        <div className="flex items-center gap-2">
-          {items.map((_, i) => (
-            <span
-              key={i}
-              className={`h-3 w-3 rounded-full transition-colors ${
-                i === index ? "bg-sky-500" : "bg-slate-300"
-              }`}
-            />
+    <div className="relative">
+      <div
+        aria-hidden
+        className="bg-dots pointer-events-none absolute inset-x-0 top-0 h-[28rem] [mask-image:linear-gradient(to_bottom,black,transparent)]"
+      />
+      <div className="container-page relative pb-24 pt-16 md:pt-24">
+      <header className="max-w-2xl">
+        <p className="font-mono text-sm text-accent">~/personal</p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">
+          When I&apos;m not coding
+        </h1>
+        <p className="mt-5 text-lg leading-relaxed text-muted">
+          Padel, Tottenham, and a notes app full of startup ideas.
+        </p>
+        <nav className="mt-8 flex flex-wrap gap-2">
+          {chapters.map((c) => (
+            <a key={c.id} href={`#${c.id}`} className="chip transition-colors hover:border-ink hover:text-ink">
+              {c.label}
+            </a>
           ))}
-        </div>
+        </nav>
+      </header>
 
-        <button
-          type="button"
-          onClick={next}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[20px] text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-white"
+      {chapters.map((c, i) => (
+        <Reveal key={c.id}>
+        <section
+          id={c.id}
+          className="mt-20 grid gap-10 border-t border-line pt-12 md:mt-28 md:grid-cols-2 md:gap-14"
         >
-          ›
-        </button>
+          <div className={i % 2 === 1 ? "md:order-2" : ""}>
+            <p className="eyebrow">
+              <span className="text-accent">{String(i + 1).padStart(2, "0")}</span> · {c.label}
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">{c.title}</h2>
+            <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-muted">
+              {c.body.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
+            </div>
+            {c.quote && (
+              <p className="mt-6 border-l-2 border-accent pl-4 font-medium italic text-ink">{c.quote}</p>
+            )}
+          </div>
+          <div className="grid auto-rows-[10rem] grid-cols-2 gap-2 sm:auto-rows-[13rem]">
+            {c.media.map((m, j) => (
+              <div
+                key={m.src}
+                className={"group overflow-hidden rounded-md " + (
+                  j === 0
+                    ? "col-span-2 row-span-2"
+                    : c.media.length % 2 === 0 && j === c.media.length - 1
+                      ? "col-span-2"
+                      : "")
+                }
+              >
+                <MediaTile m={m} />
+              </div>
+            ))}
+          </div>
+        </section>
+        </Reveal>
+      ))}
       </div>
     </div>
   );
 }
-// ---------- MEDIA ARRAYS (update file names to your own) ----------
-
-const padelMedia: MediaItem[] = [
-  { type: "image", src: "/padel-1.jpeg", alt: "Padel match" },
-  { type: "image", src: "/padel-2.jpeg", alt: "Padel court" },
-  { type: "video", src: "/padel-1.mp4", alt: "Padel rally" },
-  { type: "image", src: "/padel-3.jpeg", alt: "Post-match moment" },
-];
-
-const spursMedia: MediaItem[] = [
-  { type: "image", src: "/spurs-1.jpg", alt: "At the stadium" },
-  { type: "image", src: "/spurs-2.jpg", alt: "Tottenham shirt" },
-  { type: "video", src: "/spurs-1.mp4", alt: "Matchday atmosphere" },
-];
-
-const travelMedia: MediaItem[] = [
-  { type: "image", src: "/travel-1.jpeg", alt: "City / travel" },
-  { type: "image", src: "/travel-2.jpeg", alt: "Landscape" },
-  { type: "video", src: "/travel-1.MP4", alt: "Trip moment" },
-  { type: "image", src: "/travel-3.jpg", alt: "Another trip" },
-];
-
-// Small section label component
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-600">
-    {children}
-  </p>
-);
-
-function PersonalPage() {
-  return (
-    <div className="h-[calc(100vh-80px)] snap-y snap-mandatory overflow-y-auto bg-slate-50 text-slate-900">
-      {/* SLIDE 1 – PADEL */}
-      <section
-        id="padel"
-        className="relative snap-start bg-gradient-to-br from-emerald-50/70 via-white to-sky-50/70 min-h-[calc(100vh-80px)]"
-      >
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-10 top-10 h-64 w-64 rounded-full bg-emerald-200/40 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-6 py-16 md:flex-row md:items-center">
-          {/* text */}
-          <motion.div
-            className="md:w-1/2"
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <SectionLabel>Padel</SectionLabel>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-              Padel – my competitive side.
-            </h1>
-            <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
-              Current level:{" "}
-              <span className="text-sm font-semibold">3.5</span>
-            </p>
-
-            <p className="mt-4 text-sm text-slate-700 md:text-base">
-              Padel is where my{" "}
-              <span className="font-semibold">competitive mindset</span> really
-              shows. I play regularly at a 3.5 level, constantly trying to
-              improve my positioning, shot selection, and decision-making under
-              pressure.
-            </p>
-            <p className="mt-3 text-sm text-slate-600 md:text-base">
-              I like treating matches almost like debugging – understanding what
-              went wrong in a point, finding patterns, and adjusting strategy.
-              It&apos;s a mix of physical intensity and mental focus that feels
-              very close to how I approach engineering problems.
-            </p>
-            <p className="mt-3 text-sm text-slate-600 md:text-base">
-              Long-term, I&apos;m interested in ideas that connect{" "}
-              <span className="font-semibold">
-                sports, data, and products
-              </span>
-              : better tools for clubs, smarter booking and pricing, or ways to
-              make everyday players feel a bit more &quot;pro&quot;.
-            </p>
-
-            <div className="mt-5 flex flex-wrap gap-2 text-[11px] text-emerald-800">
-              <span className="rounded-full bg-emerald-50 px-3 py-1 ring-1 ring-emerald-200">
-                Positioning & shot selection
-              </span>
-              <span className="rounded-full bg-emerald-50 px-3 py-1 ring-1 ring-emerald-200">
-                Match mentality
-              </span>
-              <span className="rounded-full bg-emerald-50 px-3 py-1 ring-1 ring-emerald-200">
-                Training & consistency
-              </span>
-            </div>
-          </motion.div>
-
-          {/* media slider */}
-          <motion.div
-            className="md:w-1/2"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          >
-            <MediaCarousel items={padelMedia} />
-            <p className="mt-2 text-xs text-slate-500">
-              Photos & clips from training sessions, matches, and moments on
-              court.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SLIDE 2 – TOTTENHAM */}
-      <section
-        id="tottenham"
-        className="relative snap-start bg-gradient-to-br from-sky-50 via-slate-50 to-slate-100 min-h-[calc(100vh-80px)]"
-      >
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-sky-200/50 blur-3xl" />
-          <div className="absolute bottom-10 right-10 h-52 w-52 rounded-full bg-slate-300/40 blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto max-w-6xl px-6 py-16">
-          <div className="mb-10 max-w-3xl">
-            <SectionLabel>Football</SectionLabel>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-              Tottenham Hotspur
-            </h2>
-            <p className="mt-4 text-sm text-slate-700 md:text-base">
-              Supporting Tottenham Hotspur is not just supporting a club — it’s living a lifestyle built on loyalty, heartbreak, pride, and unbelievable moments.
-Spurs teach you to stand by something with your whole heart, even when it’s difficult. That’s what Audere est Facere means to me — to dare to believe even when it hurts.
-            </p>
-            <p className="mt-3 text-sm text-slate-600 md:text-base">
-              I’ve screamed at the TV, I’ve jumped off the couch, I’ve suffered, and I’ve celebrated like crazy — and every time, I come back wanting more.
-Tottenham isn’t easy… but it’s family. It’s emotion. It’s identity.
-
-I’ll always back the badge, the players, the club — through the highs and the absolute lows.
-COYS, always.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:items-center">
-            {/* media left on this one */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <MediaCarousel items={spursMedia} />
-            </motion.div>
-
-            {/* cards right */}
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: 0.05 }}
-            >
-              <div className="rounded-2xl bg-white/90 p-5 shadow-sm ring-1 ring-slate-200">
-                <p className="text-sm font-semibold text-slate-900">
-                  Why it matters to me
-                </p>
-                <p className="mt-2 text-sm text-slate-700">
-                  Tottenham is more than football for me — it’s a connection to my late grandfather, Abraham Levy, who followed this club for more than 60 years and passed that passion directly to me.
-
-Through him, I inherited not just a team to support, but a tradition. From Glenn Hoddle to Dele Alli, from Jimmy Greaves to Harry Kane, different generations, different eras — but always one club, one identity, one heart.
-
-Every match reminds me of him. The joy, the frustration, the hope — all the emotions we lived together. Supporting Spurs keeps a part of him with me, every single week.
-
-That’s why Tottenham matters to me. It’s not just football.
-It’s legacy. It’s memory. It’s family.
-
-Audere est Facere — To Dare Is To Do.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* SLIDE 3 – ENTREPRENEURSHIP & TRAVEL */}
-      <section
-        id="entrepreneurship"
-        className="relative snap-start bg-gradient-to-br from-amber-50 via-rose-50 to-sky-50 min-h-[calc(100vh-80px)]"
-      >
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-10 right-0 h-64 w-64 rounded-full bg-amber-200/50 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-rose-200/40 blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto max-w-6xl px-6 py-16">
-          <div className="mb-8 max-w-3xl">
-            <SectionLabel>Entrepreneurship & travel</SectionLabel>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-              Ideas, places, and building things that matter.
-            </h2>
-            <p className="mt-4 text-sm text-slate-700 md:text-base">
-              I&apos;m naturally drawn to{" "}
-              <span className="font-semibold">entrepreneurship</span> – not just
-              as a buzzword, but as a way of thinking. Whenever I travel, play
-              sports, or work with people, I tend to notice friction, patterns,
-              and opportunities for products.
-            </p>
-            <p className="mt-3 text-sm text-slate-600 md:text-base">
-              Travel for me is not only about seeing new places, but about
-              understanding how people live, what they care about, and how
-              systems around them are built. A lot of my ideas for future
-              projects come from those moments outside the usual routine.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1.1fr)] md:items-start">
-            {/* travel / entrepreneurship media */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <MediaCarousel items={travelMedia} />
-              <p className="mt-2 text-xs text-slate-500">
-                Trips, moments, and places that shaped how I think about people
-                and products.
-              </p>
-            </motion.div>
-
-            {/* stacked cards about ideas */}
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: 0.07 }}
-            >
-              <div className="rounded-2xl bg-white/90 p-5 shadow-sm ring-1 ring-slate-200">
-                <p className="text-sm font-semibold text-slate-900">
-                  Product thinking
-                </p>
-                <p className="mt-2 text-sm text-slate-700">
-                  I like taking a small frustration and exploring if it can
-                  become a solution for more people – from tools for students
-                  and juniors, to sports club management, to future
-                  tech-driven experiences.
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200">
-                <p className="text-sm font-semibold text-slate-900">
-                  Connecting worlds
-                </p>
-                <p className="mt-2 text-sm text-slate-700">
-                  For me, the most interesting ideas sit between{" "}
-                  <span className="font-semibold">
-                    engineering, people, and real life
-                  </span>
-                  : sports, travel, work, and community. I&apos;m always
-                  thinking about how to bridge those worlds through tech.
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-white/90 p-5 shadow-sm ring-1 ring-slate-200">
-                <p className="text-sm font-semibold text-slate-900">
-                  What&apos;s next?
-                </p>
-                <p className="mt-2 text-sm text-slate-700">
-                  More projects, more experiments, and at some point – building
-                  something bigger that combines everything I care about:
-                  engineering, padel, football, and people.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-export default PersonalPage;

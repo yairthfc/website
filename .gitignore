@@ -15,3 +15,6 @@ build
 
 # Mac/OS
 .DS_Store
+
+# Runtime data (contains subscriber emails)
+server/src/subscribers.json

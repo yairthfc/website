@@ -1,27 +1,20 @@
-﻿// client/src/App.tsx
-import { Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
+﻿import { Navigate, Route, Routes } from "react-router-dom";
+import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
-import ProjectsPage from "./pages/ProjectsPage";
+import ProjectPage from "./pages/ProjectPage";
 import PersonalPage from "./pages/PersonalPage";
-import AdminUpdatesPage from "./pages/AdminUpdatesPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <Header />
-      {/* top padding so content sits below the sticky header */}
-      <main className="pt-20">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/personal" element={<PersonalPage />} />
-          {/* 🔐 admin route */}
-          <Route path="/admin" element={<AdminUpdatesPage />} />
-        </Routes>
-      </main>
-    </div>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/projects" element={<Navigate to="/#work" replace />} />
+        <Route path="/projects/:id" element={<ProjectPage />} />
+        <Route path="/personal" element={<PersonalPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Layout>
   );
 }
-
-export default App;

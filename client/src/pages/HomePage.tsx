@@ -1,522 +1,394 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import Reveal from "../components/Reveal";
+import { featured, otherWork } from "../data/projects";
+import { education, experience, site, skills } from "../data/site";
 
-const slideHeight = "min-h-[calc(100vh-80px)]"; // full viewport minus header
-
-// Small component: arrow + "scroll for more" hint
-const ScrollHint = () => (
-  <motion.div
-    className="pointer-events-none absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center text-xs text-slate-500"
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    viewport={{ amount: 0.9 }}
-    transition={{ duration: 0.6 }}
-  >
-    <span className="mb-1">Scroll for more</span>
-    <motion.span
-      className="text-lg"
-      animate={{ y: [0, 6, 0] }}
-      transition={{ duration: 1.4, repeat: Infinity }}
-    >
-      ↓
-    </motion.span>
-  </motion.div>
-);
-
-function HomePage() {
-  // ---------------- PERSONAL PHOTOS SLIDER STATE ----------------
-  const personalPhotos = [
-    "/personal-1.jpeg",
-    "/personal-2.jpeg",
-    "/personal-3.jpeg",
-    "/personal-4.jpeg",
-  ];
-
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-
-  const nextPhoto = () =>
-    setCurrentPhotoIndex((prev) => (prev + 1) % personalPhotos.length);
-
-  const prevPhoto = () =>
-    setCurrentPhotoIndex(
-      (prev) => (prev - 1 + personalPhotos.length) % personalPhotos.length
-    );
-
-  // auto-change photo every 4 seconds
-  useEffect(() => {
-    if (personalPhotos.length === 0) return;
-
-    const interval = setInterval(() => {
-      setCurrentPhotoIndex((prev) => (prev + 1) % personalPhotos.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [personalPhotos.length]);
-
-  const currentPhoto = personalPhotos[currentPhotoIndex] ?? "/personal-1.jpeg";
-
-  // ----------------------------------------------------------------
-
+function SectionHeader({ id, n, title, aside }: { id: string; n: string; title: string; aside?: string }) {
   return (
-     <div className="min-h-[calc(100vh-80px)] overflow-y-auto md:h-[calc(100vh-80px)] md:snap-y md:snap-mandatory">
-      {/* SLIDE 1 – INTRO */}
-      <section
-        id="intro"
-        className={`relative snap-start bg-gradient-to-br from-slate-50 via-sky-50 to-sky-100 ${slideHeight}`}
-      >
-        <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 py-20 md:flex-row md:items-center">
-          {/* Left: text */}
-          <motion.div
-            className="flex-1 space-y-7"
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-sky-600">
-              Software · Engineering · CS
-            </p>
-            <h1 className="text-5xl font-bold tracking-tight text-slate-900 md:text-6xl">
-              Yair Mahfud{" "}
-              <span className="inline-block animate-bounce">👋</span>
-            </h1>
-            <p className="text-xl leading-relaxed text-slate-700">
-              I&apos;m a Software Engineer and 4th-year Computer Science student
-              at the Hebrew University of Jerusalem. I&apos;m passionate about
-              building reliable systems, solving complex problems, and
-              understanding how things work under the hood — from operating
-              systems and memory management to full-stack applications and
-              backend architecture.
-            </p>
-            <p className="text-base leading-relaxed text-slate-600">
-              Throughout my degree, I&apos;ve built strong foundations in
-              algorithms, data structures, OS & memory models, system
-              programming, networking, databases, and software design. I enjoy
-              learning new technologies, experimenting with engineering ideas,
-              and turning concepts into real, working products.
-            </p>
-
-            <div className="mt-4 space-y-2 rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Technologies & Skills
-              </p>
-              <div className="text-xs text-slate-700 md:text-sm">
-                <span className="font-semibold">Languages:</span> Python, Java,
-                C, C++, SQL, JavaScript
-              </div>
-              <div className="text-xs text-slate-700 md:text-sm">
-                <span className="font-semibold">Frameworks & Tools:</span>{" "}
-                Node.js, React, REST APIs, Git, modern frontend & backend
-                tooling
-              </div>
-              <div className="text-xs text-slate-700 md:text-sm">
-                <span className="font-semibold">Domains & Skills:</span> data
-                structures & algorithms, OS and memory management, concurrency,
-                networking, system design, full-stack development
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right: profile card */}
-          <motion.div
-            className="flex-1"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-          >
-            <div className="mx-auto max-w-sm rounded-3xl bg-white/90 p-6 shadow-xl shadow-sky-100/80 ring-1 ring-slate-200">
-              {/* Banner */}
-              <div className="relative mb-5 h-40 w-full overflow-hidden rounded-2xl bg-slate-200">
-                <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/40 via-slate-900/40 to-sky-300/40" />
-              </div>
-
-              {/* Profile image – no overlap */}
-              <div className="relative mb-5 flex justify-center">
-                <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
-                  <img
-                    src="/profile.jpeg"
-                    alt="Yair profile"
-                    className="h-full w-full object-cover object-center"
-                  />
-                </div>
-              </div>
-              <div className="space-y-1 text-center">
-                <h2 className="text-xl font-semibold text-slate-900">
-                  Yair Mahfud
-                </h2>
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-sky-600">
-                  Software Engineer · CS Student
-                </p>
-                <p className="pt-2 text-sm text-slate-600">
-                  Always learning, always building — with a focus on strong CS
-                  fundamentals and real-world projects.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        <ScrollHint />
-      </section>
-
-      {/* SLIDE 2 – PROJECTS & ENGINEERING PATH */}
-      <motion.section
-        id="about"
-        className={`relative snap-start bg-slate-50 ${slideHeight}`}
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          {/* header block with "at a glance" card */}
-          <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            <div className="md:max-w-3xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-600">
-                Engineering journey
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold text-slate-900 md:text-4xl">
-                My Engineering Path & Projects
-              </h2>
-              <p className="mt-3 text-sm text-slate-700 md:text-base">
-                During my studies at HUJI, I&apos;ve focused on building a
-                strong software-engineering mindset grounded in computer science
-                fundamentals — writing efficient code, understanding
-                system-level behavior, and building reliable, maintainable
-                software.
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-white p-4 text-sm shadow-sm ring-1 ring-slate-200 md:w-72">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                At a glance
-              </p>
-              <div className="mt-3 flex items-center gap-2">
-                <span className="text-xs text-slate-500">Academic average</span>
-                <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
-                  84
-                </span>
-              </div>
-              <p className="mt-3 text-xs text-slate-600">
-                Coursework in advanced programming, algorithms, operating
-                systems, computer architecture, databases, and machine learning.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-4">
-            {/* InternSheep */}
-            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 shadow-md ring-1 ring-slate-200">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-600">
-                  Project
-                </p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                  InternSheep
-                </h3>
-                <p className="mt-2 text-sm text-slate-600 md:text-[15px]">
-                  A Python-based platform that aggregates job listings from
-                  multiple sources, cleans and deduplicates the data, and
-                  exports structured results for students and juniors.
-                </p>
-                <p className="mt-2 text-[11px] font-medium text-sky-600">
-                  Python · concurrency · caching · CSV / data pipelines
-                </p>
-              </div>
-              <Link
-                to="/projects"
-                state={{ openProjectId: "internsheep" }}
-                className="mt-5 inline-flex w-fit items-center rounded-full bg-sky-500 px-4 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-sky-600"
-              >
-                View in projects
-              </Link>
-            </div>
-
-            {/* User-Level Thread Management Library */}
-            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 shadow-md ring-1 ring-slate-200">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">
-                  Project
-                </p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                  User-Level Thread Management Library
-                </h3>
-                <p className="mt-2 text-sm text-slate-600 md:text-[15px]">
-                  A custom user-level threading library implementing scheduling,
-                  synchronization, and efficient context switching as part of a
-                  systems programming project.
-                </p>
-                <p className="mt-2 text-[11px] font-medium text-emerald-600">
-                  C / C++ · concurrency · scheduling · OS concepts
-                </p>
-              </div>
-              <Link
-                to="/projects"
-                state={{ openProjectId: "uthreads" }}
-                className="mt-5 inline-flex w-fit items-center rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-600"
-              >
-                View in projects
-              </Link>
-            </div>
-
-            {/* VM Management System */}
-            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 shadow-md ring-1 ring-slate-200">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-600">
-                  Project
-                </p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                  Hierarchical Virtual Memory Manager
-                </h3>
-                <p className="mt-2 text-sm text-slate-600 md:text-[15px]">
-                  A C++ virtual memory management system simulating hierarchical
-                  page tables, address translation, page faults, swapping, and a
-                  custom eviction strategy — all under strict memory constraints
-                  and without dynamic allocation.
-                </p>
-                <p className="mt-2 text-[11px] font-medium text-violet-600">
-                  C++ · OS · memory models · page tables · eviction algorithms
-                </p>
-              </div>
-              <Link
-                to="/projects"
-                state={{ openProjectId: "vm-manager" }}
-                className="mt-5 inline-flex w-fit items-center rounded-full bg-violet-500 px-4 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-violet-600"
-              >
-                View in projects
-              </Link>
-            </div>
-
-            {/* IML Hackathon */}
-            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 shadow-md ring-1 ring-slate-200">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">
-                  Project
-                </p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                  IML Hackathon – ML Prediction
-                </h3>
-                <p className="mt-2 text-sm text-slate-600 md:text-[15px]">
-                  A hackathon project building models to predict match
-                  compatibility and importance ratings using anonymized user
-                  data, with multiple ML approaches and evaluation.
-                </p>
-                <p className="mt-2 text-[11px] font-medium text-amber-600">
-                  Python · ML models · data preprocessing · model evaluation
-                </p>
-              </div>
-              <Link
-                to="/projects"
-                state={{ openProjectId: "iml-hackathon" }}
-                className="mt-5 inline-flex w-fit items-center rounded-full bg-amber-500 px-4 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-amber-600"
-              >
-                View in projects
-              </Link>
-            </div>
-            {/* Nanobody 3D Structure Prediction Network */}
-            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 shadow-md ring-1 ring-slate-200">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-600">
-                  Project
-                </p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                  Nanobody 3D Structure Prediction
-                </h3>
-                <p className="mt-2 text-sm text-slate-600 md:text-[15px]">
-                  A TensorFlow/Keras model that predicts nanobody backbone coordinates from sequence using 1D ResNet-style convolutions.
-                </p>
-                <p className="mt-2 text-[11px] font-medium text-indigo-600">
-                  Python · TensorFlow · Structural biology
-                </p>
-              </div>
-              <Link
-                to="/projects"
-                state={{ openProjectId: "nanobody-structure-nn" }} // 👈 important
-                className="mt-5 inline-flex w-fit items-center rounded-full bg-indigo-500 px-4 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-600"
-              >
-                View in projects
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <ScrollHint />
-      </motion.section>
-
-      {/* SLIDE 3 – PERSONAL + PHOTO SLIDER */}
-      <motion.section
-        id="focus"
-        className={`relative snap-start bg-slate-100 ${slideHeight}`}
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 md:flex-row md:items-center">
-          {/* Left: text */}
-          <div className="md:w-1/2">
-            <h2 className="mb-4 text-3xl font-semibold text-slate-900 md:text-4xl">
-              Beyond Engineering
-            </h2>
-            <p className="mb-4 text-sm text-slate-700 md:text-base">
-              Outside the world of code, I&apos;m someone who loves energy,
-              creativity, and ambition. I&apos;m passionate about{" "}
-              <span className="font-semibold">entrepreneurship</span> -{" "}
-              constantly thinking about ideas, building small things, and
-              exploring how technology can improve experiences in work, sports,
-              or daily life.
-            </p>
-            <p className="mb-4 text-sm text-slate-700 md:text-base">
-              I&apos;m also currently the{" "}
-              <span className="font-semibold">
-                Chief Security Officer (CSO) at the Hebrew University of
-                Jerusalem
-              </span>
-              , a role that has taught me responsibility, strategic thinking,
-              and leadership.
-            </p>
-            <p className="mb-6 text-sm text-slate-700 md:text-base">
-              Sports are a big part of who I am. I&apos;m a dedicated padel
-              player and a Tottenham Hotspur supporter (which requires serious
-              emotional resilience 😅). I love the passion and community around
-              sports, and I&apos;m always looking for ways to connect these
-              interests with technology - whether through ideas, projects, or
-              future products.
-            </p>
-            <p className="text-sm text-slate-700 md:text-base">
-              At my core, I&apos;m curious, ambitious, and driven to create
-              things that matter - in tech and beyond.
-            </p>
-            <div className="mt-6">
-              <a
-                href="/personal"
-                className="inline-flex items-center rounded-full bg-sky-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-700 transition"
-              >
-                Explore Personal Page →
-              </a>
-            </div>
-
-          </div>
-
-          {/* Right: sliding photos */}
-          <div className="md:w-1/2">
-            <div className="relative mx-auto h-[28rem] max-w-md overflow-hidden rounded-3xl bg-slate-900/5 shadow-md ring-1 ring-slate-200">
-              <motion.img
-                key={currentPhoto}
-                src={currentPhoto}
-                alt="Personal"
-                className="h-full w-full object-cover"
-                initial={{ opacity: 0.2, scale: 1.02 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              />
-
-              {/* gradient overlay for subtle styling */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
-
-              {/* controls */}
-              <div className="absolute inset-x-0 bottom-4 flex items-center justify-between px-5">
-                <button
-                  type="button"
-                  onClick={prevPhoto}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/85 text-[18px] text-slate-700 shadow-sm hover:bg-white"
-                >
-                  ‹
-                </button>
-                <div className="flex items-center gap-2">
-                  {personalPhotos.map((_, idx) => (
-                    <span
-                      key={idx}
-                      className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                        idx === currentPhotoIndex
-                          ? "bg-sky-500"
-                          : "bg-white/60"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={nextPhoto}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/85 text-[18px] text-slate-700 shadow-sm hover:bg-white"
-                >
-                  ›
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <ScrollHint />
-      </motion.section>
-
-      {/* SLIDE 4 – CONTACT (dark top, light bottom) */}
-      <motion.section
-        id="contact"
-        className={`relative snap-start bg-gradient-to-b from-slate-950 via-slate-950 to-slate-100 ${slideHeight} flex flex-col`}
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        {/* MAIN CONTENT: centered vertically */}
-        <div className="flex flex-1 items-center justify-center px-6">
-          <div className="mx-auto max-w-3xl text-center text-slate-50">
-            <h2 className="mb-5 -mt-6 text-4xl font-semibold tracking-tight md:mb-6 md:text-5xl">
-              Let&apos;s work together.
-            </h2>
-            <p className="mb-10 mx-auto max-w-xl text-sm text-slate-300 md:text-lg">
-              I&apos;m open to software engineering roles, internships,
-              collaborations, and interesting projects — especially those
-              involving full-stack development, system programming, or
-              challenging engineering problems. Whether you have an idea, an
-              opportunity, or just want to connect, feel free to reach out.
-            </p>
-
-            <div className="mb-8 flex flex-wrap justify-center gap-5">
-              <a
-                href="mailto:yairthfc@gmail.com"
-                className="rounded-full bg-sky-500 px-7 py-3 text-sm font-medium text-white shadow-sm hover:bg-sky-600 md:text-base"
-              >
-                Email me
-              </a>
-              <a
-                href="https://www.linkedin.com/in/yairmahfud"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-slate-600 px-7 py-3 text-sm font-medium text-slate-100 hover:border-sky-400 hover:text-sky-200 md:text-base"
-              >
-                Connect on LinkedIn
-              </a>
-              <a
-                href="https://github.com/yairthfc"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-slate-600 px-7 py-3 text-sm font-medium text-slate-100 hover:border-sky-400 hover:text-sky-200 md:text-base"
-              >
-                View my GitHub
-              </a>
-              <a
-                href="/yair-mahfud-resume.pdf"
-                download
-                className="rounded-full bg-emerald-500 px-7 py-3 text-sm font-medium text-white shadow-sm hover:bg-emerald-600 md:text-base"
-              >
-                Download résumé
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* FOOTER */}
-        <div className="pointer-events-none mb-2 text-center text-[11px] text-slate-400">
-          <div>
-            Based in Israel · Open to cool projects, internships, and
-            collaborations.
-          </div>
-          <div className="mt-1 text-slate-500">
-            © {new Date().getFullYear()} Yair Mahfud
-          </div>
-        </div>
-      </motion.section>
+    <div id={id} className="mb-10 flex items-baseline justify-between border-b border-line pb-4">
+      <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+        <span className="mr-3 font-mono text-base font-normal text-accent">{n}</span>
+        {title}
+      </h2>
+      {aside && <span className="font-mono text-xs text-faint">{aside}</span>}
     </div>
   );
 }
 
-export default HomePage;
+function StatusPill() {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/80 px-3 py-1 text-xs font-medium text-muted shadow-sm backdrop-blur">
+      <span className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60 motion-reduce:animate-none" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+      </span>
+      Open to backend roles
+    </span>
+  );
+}
+
+const facts = [
+  { k: "Now", v: "DevOps @ Check Point" },
+  { k: "Degree", v: "B.Sc. CS, Hebrew U" },
+  { k: "Honors", v: "Dean's List 2024/25" },
+  { k: "Work rights", v: "Israel & UK" },
+];
+
+function Hero() {
+  return (
+    <section className="relative overflow-hidden">
+      <div
+        aria-hidden
+        className="bg-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_80%_at_20%_30%,black,transparent)]"
+      />
+      <div className="container-page relative grid gap-14 pb-16 pt-14 md:grid-cols-[1fr_auto] md:items-center md:pb-20 md:pt-24">
+        <div className="max-w-2xl">
+          <StatusPill />
+          <h1 className="mt-7 text-4xl font-semibold leading-[1.08] tracking-tight md:text-[3.5rem]">
+            I build backend systems{" "}
+            <span className="text-faint">and keep them running in production.</span>
+          </h1>
+          <p className="mt-7 max-w-prose text-lg leading-relaxed text-muted">
+            I&apos;m Yair. I work as a DevOps engineer at{" "}
+            <span className="font-medium text-ink">Check Point</span>, on the team that runs its
+            cloud security services on Kubernetes and AWS. Before that, and alongside it, I studied
+            Computer Science at the Hebrew University of Jerusalem and built systems software for fun.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <Link to="/#work" className="btn-primary">
+              See my work <span aria-hidden>↓</span>
+            </Link>
+            <a href={site.resume} target="_blank" rel="noreferrer" className="btn-ghost bg-white">
+              Résumé
+            </a>
+            <div className="ml-1 flex gap-5 text-sm">
+              <a className="link" href={site.github} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+              <a className="link" href={site.linkedin} target="_blank" rel="noreferrer">
+                LinkedIn
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <figure className="group relative w-52 justify-self-start md:w-64 md:justify-self-end">
+          <div className="rotate-[-4deg] rounded-md bg-white p-2.5 pb-6 shadow-photo ring-1 ring-line transition-transform duration-500 ease-out group-hover:rotate-0">
+            <img
+              src="/profile.jpeg"
+              alt="Yair Mahfud"
+              className="aspect-[4/5] w-full rounded-sm object-cover"
+            />
+          </div>
+          <span className="absolute -right-3 -top-3 rotate-[8deg] rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white shadow-md transition-transform duration-500 group-hover:rotate-0">
+            hi, that&apos;s me
+          </span>
+        </figure>
+      </div>
+
+      <div className="container-page relative pb-14">
+        <dl className="grid grid-cols-2 overflow-hidden rounded-xl border border-line bg-white md:grid-cols-4">
+          {facts.map((f, i) => (
+            <div
+              key={f.k}
+              className={`px-5 py-4 ${i % 2 === 1 ? "border-l border-line" : ""} ${
+                i >= 2 ? "border-t border-line md:border-t-0" : ""
+              } ${i === 2 ? "md:border-l" : ""}`}
+            >
+              <dt className="eyebrow">{f.k}</dt>
+              <dd className="mt-1 text-sm font-medium md:text-[15px]">{f.v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
+const tickerItems = [
+  "AWS",
+  "Kubernetes",
+  "Docker",
+  "Python",
+  "C++",
+  "C",
+  "Java",
+  "SQL",
+  "Linux",
+  "GCP",
+  "Azure",
+  "Jenkins",
+  "TCP/UDP",
+  "x64 assembly",
+  "TensorFlow",
+  "React",
+];
+
+function Ticker() {
+  return (
+    <div className="overflow-hidden border-y border-ink bg-ink py-3 text-paper" aria-hidden>
+      <div className="flex w-max animate-marquee font-mono text-sm motion-reduce:animate-none">
+        {[...tickerItems, ...tickerItems].map((t, i) => (
+          <span key={i} className="flex items-center">
+            <span className="px-6">{t}</span>
+            <span className="text-accent">✦</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Experience() {
+  return (
+    <section className="container-page pt-20 md:pt-28">
+      <SectionHeader id="experience" n="01" title="Experience" />
+      <ol className="relative space-y-12 border-l border-line pl-8 md:ml-[11rem]">
+        {experience.map((j) => (
+          <Reveal key={j.org}>
+            <li className="relative">
+              <span
+                className={`absolute -left-[2.35rem] top-1.5 h-3 w-3 rounded-full ring-4 ring-paper ${
+                  j.current ? "bg-accent" : "bg-line"
+                }`}
+              />
+              <p className="font-mono text-xs text-faint md:absolute md:-left-[13rem] md:top-1 md:w-40 md:text-right">
+                {j.period}
+              </p>
+              <h3 className="mt-1 text-xl font-semibold tracking-tight md:mt-0">
+                {j.org}
+                {j.current && (
+                  <span className="ml-3 rounded bg-accent-soft px-1.5 py-0.5 align-middle font-mono text-xs font-normal text-[#B5410A]">
+                    current
+                  </span>
+                )}
+              </h3>
+              <p className="mt-0.5 text-muted">{j.role}</p>
+              <ul className="mt-4 max-w-prose space-y-2 text-[15px] leading-relaxed">
+                {j.points.map((p) => (
+                  <li key={p} className="relative pl-5">
+                    <span className="absolute left-0 top-[0.7em] h-px w-2.5 bg-accent" />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+              {j.tags && (
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {j.tags.map((t) => (
+                    <span key={t} className="chip">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </li>
+          </Reveal>
+        ))}
+        <Reveal>
+          <li className="relative">
+            <span className="absolute -left-[2.35rem] top-1.5 h-3 w-3 rounded-full bg-line ring-4 ring-paper" />
+            <p className="font-mono text-xs text-faint md:absolute md:-left-[13rem] md:top-1 md:w-40 md:text-right">
+              {education.period}
+            </p>
+            <h3 className="mt-1 text-xl font-semibold tracking-tight md:mt-0">{education.school}</h3>
+            <p className="mt-0.5 text-muted">
+              {education.degree} · {education.highlights.join(" · ")}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {education.grades.map((g) => (
+                <span key={g.course} className="rounded-md border border-line bg-white px-2.5 py-1.5 text-sm">
+                  {g.course} <span className="ml-1 font-mono font-medium text-accent">{g.grade}</span>
+                </span>
+              ))}
+            </div>
+          </li>
+        </Reveal>
+      </ol>
+    </section>
+  );
+}
+
+function ProjectCard({ p, i }: { p: (typeof featured)[number]; i: number }) {
+  return (
+    <Link
+      to={`/projects/${p.id}`}
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-white transition duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:border-ink hover:shadow-hard"
+    >
+      <div className="flex items-center gap-2 border-b border-line bg-paper px-4 py-2.5 transition-colors group-hover:border-ink">
+        <span className="flex gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-line transition-colors group-hover:bg-[#FF5F57]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line transition-colors group-hover:bg-[#FEBC2E]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line transition-colors group-hover:bg-[#28C840]" />
+        </span>
+        <span className="ml-2 truncate font-mono text-xs text-faint">~/{p.id}</span>
+        <span className="ml-auto font-mono text-xs text-faint group-hover:text-accent">
+          {String(i + 1).padStart(2, "0")}
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <p className="eyebrow">
+          {p.area}
+          {p.status && <span className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-[#B5410A]">{p.status}</span>}
+        </p>
+        <h3 className="mt-3 text-xl font-semibold tracking-tight">{p.title}</h3>
+        <p className="mt-2 leading-relaxed text-muted">{p.summary}</p>
+        <div className="mt-5 flex flex-wrap gap-1.5">
+          {p.stack.map((s) => (
+            <span key={s} className="chip">
+              {s}
+            </span>
+          ))}
+        </div>
+        <span className="mt-auto pt-6 text-sm font-medium">
+          Read more{" "}
+          <span className="inline-block text-accent transition-transform group-hover:translate-x-1">→</span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function Work() {
+  return (
+    <section className="container-page pb-24 pt-20 md:pt-28">
+      <SectionHeader id="work" n="02" title="Projects" aside={`${featured.length} featured`} />
+      <div className="grid gap-6 md:grid-cols-2">
+        {featured.map((p, i) => (
+          <Reveal key={p.id} delay={(i % 2) * 100}>
+            <ProjectCard p={p} i={i} />
+          </Reveal>
+        ))}
+      </div>
+
+      <Reveal>
+        <h3 className="mb-2 mt-20 text-lg font-semibold tracking-tight">Also on my GitHub</h3>
+        <p className="mb-6 text-sm text-muted">Machine learning work: a deep learning model, algorithms written from scratch, and a hackathon.</p>
+        <ul className="divide-y divide-line border-y border-line">
+          {otherWork.map((w) => (
+            <li key={w.title}>
+              <a
+                href={w.github}
+                target="_blank"
+                rel="noreferrer"
+                className="group -mx-3 grid gap-1 rounded-md px-3 py-4 transition-colors hover:bg-white sm:grid-cols-[16rem_1fr_auto] sm:items-baseline sm:gap-6"
+              >
+                <span className="font-medium transition-colors group-hover:text-accent">{w.title}</span>
+                <span className="text-sm text-muted">{w.description}</span>
+                <span className="font-mono text-xs text-faint">
+                  {w.stack}{" "}
+                  <span className="ml-2 inline-block text-ink transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent">
+                    ↗
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <section className="container-page pb-24">
+      <SectionHeader id="about" n="03" title="About me" />
+      <Reveal className="grid gap-12 md:grid-cols-[1fr_20rem]">
+        <div className="max-w-prose space-y-5 text-[17px] leading-relaxed text-muted">
+          <p>
+            I like knowing how things actually work. How an OS hands out memory, how it switches
+            between threads, how a DNS resolver can be fooled into trusting a fake answer. Most of my
+            side projects start with a question like that and end with code that runs.
+          </p>
+          <p>
+            At Check Point I get the other half: real production systems, real incidents, and the
+            automation that keeps them quiet. That&apos;s pushed me toward backend work, where I want
+            to build the services myself and not only run them.
+          </p>
+          <p>
+            I speak Hebrew and English natively and can work in both Israel and the UK. When
+            I&apos;m not working I&apos;m probably on a padel court or watching Tottenham and
+            regretting it.{" "}
+            <Link className="link text-ink" to="/personal">
+              More about me →
+            </Link>
+          </p>
+        </div>
+        <dl className="space-y-5 rounded-xl border border-line bg-white p-6">
+          {skills.map((s) => (
+            <div key={s.label}>
+              <dt className="eyebrow">{s.label}</dt>
+              <dd className="mt-1.5 text-sm leading-relaxed text-ink">{s.items.join(", ")}</dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section id="contact" className="relative overflow-hidden bg-ink text-paper">
+      <div aria-hidden className="bg-dots-dark pointer-events-none absolute inset-0" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-48 -left-24 h-[30rem] w-[30rem] rounded-full bg-accent/20 blur-3xl"
+      />
+      <div className="container-page relative py-24 md:py-32">
+        <p className="font-mono text-sm text-accent">04 · contact</p>
+        <h2 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight md:text-6xl">
+          Hiring for backend? Let&apos;s talk.
+        </h2>
+        <a
+          href={`mailto:${site.email}`}
+          className="group mt-10 inline-flex items-center gap-3 break-all text-xl text-white md:text-3xl"
+        >
+          <span className="underline decoration-white/30 underline-offset-8 transition-colors group-hover:decoration-accent">
+            {site.email}
+          </span>
+          <span className="text-accent transition-transform group-hover:translate-x-1">→</span>
+        </a>
+        <div className="mt-12 flex flex-wrap gap-3 text-sm">
+          <a
+            href={site.resume}
+            target="_blank"
+            rel="noreferrer"
+            className="btn bg-accent text-white hover:bg-white hover:text-ink"
+          >
+            Download résumé
+          </a>
+          <a
+            href={site.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className="btn border border-white/20 hover:border-white"
+          >
+            LinkedIn
+          </a>
+          <a
+            href={site.github}
+            target="_blank"
+            rel="noreferrer"
+            className="btn border border-white/20 hover:border-white"
+          >
+            GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <>
+      <Hero />
+      <Ticker />
+      <Experience />
+      <Work />
+      <About />
+      <Contact />
+    </>
+  );
+}
