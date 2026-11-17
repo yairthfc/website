@@ -130,6 +130,43 @@ const LAYER_FILL = Array.from({ length: LAYERS }, (_, k) =>
 const FORE = 40; // front face, aimed at the right wall
 const BACK = 140; // back face, aimed at the left wall
 
+/**
+ * Shot types. speed is a multiplier, arcs are px, wallY / contactY are fractions
+ * of the screen height, pitch is how far the face opens upward (deg), swing scales
+ * the swing size, lift is the low-to-high racket path (mm), spin scales ball spin.
+ */
+type Shot = {
+  name: "drive" | "lob" | "chiquita" | "volley";
+  weight: number;
+  speed: number;
+  arcTo: [number, number];
+  arcBack: [number, number];
+  wallY: [number, number];
+  contactY: [number, number];
+  pitch: number;
+  swing: number;
+  lift: number;
+  spin: number;
+};
+
+const SHOTS: Shot[] = [
+  { name: "drive", weight: 0.38, speed: 1.2, arcTo: [25, 60], arcBack: [15, 45], wallY: [0.35, 0.55], contactY: [0.5, 0.62], pitch: 4, swing: 1, lift: 12, spin: 1.3 },
+  { name: "lob", weight: 0.24, speed: 0.72, arcTo: [200, 320], arcBack: [30, 70], wallY: [0.12, 0.28], contactY: [0.6, 0.7], pitch: 34, swing: 0.9, lift: 70, spin: 0.6 },
+  { name: "chiquita", weight: 0.16, speed: 0.6, arcTo: [40, 80], arcBack: [20, 50], wallY: [0.5, 0.66], contactY: [0.6, 0.7], pitch: 16, swing: 0.5, lift: 20, spin: 0.4 },
+  { name: "volley", weight: 0.22, speed: 1.05, arcTo: [40, 90], arcBack: [20, 60], wallY: [0.3, 0.45], contactY: [0.36, 0.46], pitch: -6, swing: 0.45, lift: 0, spin: 0.8 },
+];
+
+/** Weighted pick; special shots rarely repeat back to back. */
+const pickShot = (prev: Shot): Shot => {
+  const weights = SHOTS.map((s) => (s === prev && s.name !== "drive" ? s.weight * 0.25 : s.weight));
+  let r = Math.random() * weights.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < SHOTS.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return SHOTS[i];
+  }
+  return SHOTS[0];
+};
+
 export default function PadelBackground() {
   const svgRef = useRef<SVGSVGElement>(null);
   const racketRef = useRef<SVGGElement>(null);
@@ -162,12 +199,19 @@ export default function PadelBackground() {
     const SWEET = -30;
     let frontVisible: boolean | null = null;
 
-    const drawRacket = (x: number, y: number, tilt: number, theta: number) => {
+    /** theta: turn around the long axis. pitch: face opening upward, hinged at the wrist. */
+    const drawRacket = (x: number, y: number, tilt: number, theta: number, pitch: number) => {
       const r = (theta * Math.PI) / 180;
       const c = Math.cos(r);
       const sn = Math.sin(r);
+      const pr = (pitch * Math.PI) / 180;
+      const cp = Math.cos(pr);
+      const sp = Math.sin(pr);
       const cx = Math.abs(c) < 0.02 ? 0.02 * (c < 0 ? -1 : 1) : c;
-      racketRef.current?.setAttribute("transform", `translate(${x} ${y}) scale(${s}) rotate(${tilt} 0 250)`);
+      racketRef.current?.setAttribute(
+        "transform",
+        `translate(${x} ${y}) scale(${s}) rotate(${tilt} 0 250) translate(0 250) scale(1 ${cp}) translate(0 -250)`,
+      );
 
       const showFront = c >= 0;
       if (showFront !== frontVisible) {
@@ -182,15 +226,19 @@ export default function PadelBackground() {
       }
 
       // the back of the racket sits behind the face, pushed sideways as it turns
+      // thickness shows on the side when turned, and on the bottom edge when the face opens up
       layerRefs.current.forEach((el, k) => {
-        const off = -sn * DEPTH_MM * (k / (LAYERS - 1) - 0.5);
-        el?.setAttribute("transform", `translate(${off} 0) scale(${cx} 1)`);
+        const f = k / (LAYERS - 1) - 0.5;
+        const offX = -sn * DEPTH_MM * f;
+        const offY = c * sp * DEPTH_MM * f;
+        el?.setAttribute("transform", `translate(${offX} ${offY}) scale(${cx} 1)`);
       });
       const face = showFront ? frontRef.current : backRef.current;
-      const faceOff = (showFront ? 0.5 : -0.5) * sn * DEPTH_MM;
-      face?.setAttribute("transform", `translate(${faceOff} 0) scale(${cx} 1)`);
-      face?.querySelector("[data-gloss]")?.setAttribute("transform", `translate(${(showFront ? 1 : -1) * sn * 130 - 40} 0)`);
-      face?.querySelector("[data-shade]")?.setAttribute("opacity", String((1 - Math.abs(c)) * 0.45));
+      const faceOffX = (showFront ? 0.5 : -0.5) * sn * DEPTH_MM;
+      const faceOffY = -0.5 * Math.abs(c) * sp * DEPTH_MM;
+      face?.setAttribute("transform", `translate(${faceOffX} ${faceOffY}) scale(${cx} 1)`);
+      face?.querySelector("[data-gloss]")?.setAttribute("transform", `translate(${(showFront ? 1 : -1) * sn * 130 - 40} ${-sp * 90})`);
+      face?.querySelector("[data-shade]")?.setAttribute("opacity", String((1 - Math.abs(c) * cp) * 0.45));
     };
 
     const ballAt = (x: number, y: number, sx: number, spin: number) => {
@@ -199,18 +247,22 @@ export default function PadelBackground() {
     };
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      drawRacket(W * 0.5, H * 0.6, -6, FORE);
+      drawRacket(W * 0.5, H * 0.6, -6, FORE, 8);
       ballAt(W * 0.5 + 150 * s, H * 0.6 + SWEET * s - 30, 1, 0);
       return () => window.removeEventListener("resize", layout);
     }
 
     // ---- rally state ----
     let dir: -1 | 1 = 1; // shot just played: 1 = to the right wall (forehand), -1 = left (backhand)
-    let thHit = FORE; // wrist angle at the last contact
-    let thNext = BACK; // wrist angle wanted for the next contact
-    let C = { x: W * 0.5, y: H * 0.6 + SWEET * s };
+    let cur: Shot = SHOTS[0]; // the shot in the air
+    let nxt: Shot = pickShot(cur); // the shot the racket is preparing
+    let thHit = FORE; // wrist turn at the last contact
+    let thNext = BACK; // wrist turn wanted for the next contact
+    let pHit = cur.pitch; // face opening at the last contact
+    let pNext = nxt.pitch; // face opening wanted for the next contact
+    let C = { x: W * 0.5, y: H * 0.58 }; // ball position at the last contact
     let Wp = { x: 0, y: 0 };
-    let Q = { x: 0, y: 0 };
+    let Q = { x: 0, y: 0 }; // ball position at the next contact
     let tHit = 0;
     let tWall = 0;
     let tNext = 0;
@@ -218,27 +270,38 @@ export default function PadelBackground() {
     let arc2 = 0;
 
     const plan = (now: number) => {
-      const speed = Math.max(380, W * 0.46);
-      Wp = { x: dir < 0 ? ballR : W - ballR, y: H * rand(0.22, 0.5) };
-      Q = { x: W * rand(0.38, 0.62), y: H * rand(0.52, 0.66) + SWEET * s };
+      const speed = Math.max(380, W * 0.46) * cur.speed;
+      Wp = { x: dir < 0 ? ballR : W - ballR, y: H * rand(...cur.wallY) };
+      Q = { x: W * rand(0.38, 0.62), y: H * rand(...nxt.contactY) };
       tHit = now;
       tWall = now + (Math.abs(Wp.x - C.x) / speed) * 1000;
       tNext = tWall + (Math.abs(Q.x - Wp.x) / speed) * 1000;
-      arc1 = rand(50, 120);
-      arc2 = rand(30, 90);
-      thNext = (dir === 1 ? BACK : FORE) + rand(-6, 6);
+      // keep the top of each arc on screen
+      arc1 = Math.max(10, Math.min(rand(...cur.arcTo), (C.y + Wp.y) / 2 - 90));
+      arc2 = Math.max(10, Math.min(rand(...cur.arcBack), (Wp.y + Q.y) / 2 - 90));
+      thNext = (dir === 1 ? BACK : FORE) + rand(-8, 8);
+      pNext = nxt.pitch + rand(-5, 5);
     };
     plan(performance.now());
 
-    const swing = (now: number, tc: number, d: number) => {
+    const swing = (now: number, tc: number, d: number, amp: number) => {
       // tilt in the screen plane: backswing away from the target, then through contact
-      const B = -d * 24;
-      const F = d * 20;
+      const B = -d * 24 * amp;
+      const F = d * 20 * amp;
       const dt = now - tc;
       if (dt < -700) return 0;
       if (dt < -200) return B * ease(clamp01((dt + 700) / 500));
       if (dt < 160) return B + (F - B) * ease(clamp01((dt + 200) / 360));
       if (dt < 850) return F * (1 - ease(clamp01((dt - 160) / 690)));
+      return 0;
+    };
+    const lift = (now: number, tc: number, L: number) => {
+      // low-to-high racket path: dip before contact, finish high after it
+      const dt = now - tc;
+      if (dt < -650) return 0;
+      if (dt < -180) return 0.5 * L * ease(clamp01((dt + 650) / 470));
+      if (dt < 220) return 0.5 * L - 1.5 * L * ease(clamp01((dt + 180) / 400));
+      if (dt < 900) return -L * (1 - ease(clamp01((dt - 220) / 680)));
       return 0;
     };
 
@@ -250,6 +313,9 @@ export default function PadelBackground() {
         C = Q;
         dir = -dir as -1 | 1;
         thHit = thNext;
+        pHit = pNext;
+        cur = nxt;
+        nxt = pickShot(cur);
         plan(now);
       }
 
@@ -266,7 +332,7 @@ export default function PadelBackground() {
       }
       const wallDt = Math.abs(now - tWall);
       const squash = wallDt < 90 ? 1 - 0.22 * (1 - wallDt / 90) : 1;
-      ballAt(bx, by, squash, now * 0.45 * dir);
+      ballAt(bx, by, squash, now * 0.45 * dir * cur.spin);
 
       const glow = now >= tWall ? Math.max(0, 1 - (now - tWall) / 450) : 0;
       (dir < 0 ? flashL : flashR).current?.setAttribute("opacity", String(glow * 0.9));
@@ -277,13 +343,22 @@ export default function PadelBackground() {
       // ---- racket ----
       const u = (now - tHit) / (tNext - tHit);
       const moveT = ease(clamp01((now - tHit - 200) / Math.max(300, tNext - tHit - 450)));
-      const rx = C.x + (Q.x - C.x) * moveT;
-      const ry = C.y + (Q.y - C.y) * moveT - SWEET * s + Math.sin(now / 520) * 3;
-      const tilt = swing(now, tNext, -dir) + swing(now, tHit, dir);
       // wrist turn flows across the whole flight: out of the follow-through, through
       // edge-on, and settles just before the next contact
       const theta = thHit + (thNext - thHit) * easeSine(clamp01((u - 0.08) / 0.8));
-      drawRacket(rx, ry, tilt, theta);
+      // the face opens (lob) or closes (volley) as the next shot gets close
+      const pitch = pHit + (pNext - pHit) * easeSine(clamp01((u - 0.3) / 0.62));
+      // place the racket so its sweet spot meets the ball, given the current face opening
+      const sweetY = 250 + (SWEET - 250) * Math.cos((pitch * Math.PI) / 180);
+      const rx = C.x + (Q.x - C.x) * moveT;
+      const ry =
+        C.y +
+        (Q.y - C.y) * moveT -
+        sweetY * s +
+        Math.sin(now / 520) * 3 +
+        (lift(now, tNext, nxt.lift) + lift(now, tHit, cur.lift)) * s * 1.6;
+      const tilt = swing(now, tNext, -dir, nxt.swing) + swing(now, tHit, dir, cur.swing);
+      drawRacket(rx, ry, tilt, theta, pitch);
     };
     raf = requestAnimationFrame(tick);
 
